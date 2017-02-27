@@ -253,7 +253,7 @@ def run_SOBI(X, tau_len = 15):
 
 import numpy as np
 def generate_covariance_matrices(X, tau_len):
-#1. Generating the covariance matrices for "tau_len" lags
+    #1. Generating the covariance matrices for "tau_len" lags
     R_tau = {}
     R0 = np.dot(X,X.T)
     R_tau[0] = R0
@@ -283,14 +283,16 @@ def generate_update_term(R_tau):
             y = np.zeros(W.shape)
             for k in xrange(0,K):
                 z[i,j] += Dk[k][i,j]
-                y[i,j] += Dk[k][j,j]*E[k][i,j]
+                y[i,j] += Dk[k][j,j]*Ek[k][i,j]
             if i == j:
                 pass
             else:
                 W[i][j] = (z[i,j]*y[j,i]-z[i,i]*y[i,j])/(z[j,j]*z[i,i]-z[i,j]*z[i,j])
     return W
 
-def FFDIAG(X, tau_len):
+def FFDIAG(X, tau_len = 10):
+    if tau_len == None:
+        tau_len = 10
     R_tau = generate_covariance_matrices(X,tau_len)
     N = len(R_tau[0])
     K = len(R_tau.keys())
@@ -316,6 +318,6 @@ def FFDIAG(X, tau_len):
                 else:
                     delta += (V[i][j]-Vn1[i][j])**2
         eps = delta/(N*(N-1))
-
+    
     ut = np.dot(V,X)
-    return ut,C
+    return C,W,ut
