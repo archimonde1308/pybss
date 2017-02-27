@@ -320,4 +320,4 @@ def FFDIAG(X, tau_len = 10):
         eps = delta/(N*(N-1))
     
     ut = np.dot(V,X)
-    return C,W,ut
+    return C,V,ut
