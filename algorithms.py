@@ -318,6 +318,95 @@ def FFDIAG(X, tau_len = 10):
                 else:
                     delta += (V[i][j]-Vn1[i][j])**2
         eps = delta/(N*(N-1))
-    
+
     ut = np.dot(V,X)
     return C,V,ut
+
+
+# # Orthogonal FFDIAG
+
+# In[9]:
+
+import numpy as np
+from pyica.fastica import whiteningmatrix
+from scipy.linalg import expm
+def ortho_generate_covariance_matrices(X, tau_len):
+#1. Generating the covariance matrices for "tau_len" lags
+    R_tau = {}
+    R0 = np.dot(X,X.T)
+    R_tau[0] = R0
+    u,s,v = np.linalg.svd(R0, full_matrices = False)
+    N = len(X[0,:])
+    for k in xrange(0,tau_len):
+        tau = k
+        for i in xrange(tau,N):
+            X_t = X[:,0:N-tau]
+            X_ttau = X[:,tau:N]
+            Rt = np.dot(X_t,X_ttau.T)
+            R_tau[k] = Rt
+    return R_tau
+
+def ortho_generate_update_term(R_tau):
+    Dk = {}
+    Ek = {}
+    N = len(R_tau[0])
+    K = len(R_tau.keys())
+    for keys in R_tau.keys():
+        Dk[keys] = np.diag(np.diag(R_tau[keys]))
+        Ek[keys] = R_tau[keys] - Dk[keys]
+    W = np.zeros((N,N))
+    numer = np.zeros((N,N))
+    denom = np.zeros((N,N))
+    # compute W
+    for i in xrange(0,N):
+        for j in xrange(0,N):
+            for keys in R_tau.keys():
+                numer[i,j] +=  Ek[keys][i,j]*(Dk[keys][i,i] - Dk[keys][j,j])
+                denom[i,j] += (Dk[keys][i,i]-Dk[keys][j,j])**2
+    for i in xrange(0,N):
+        for j in xrange(0,N):
+            if i == j:
+                W[i,j] = 0.0
+            else:
+                W[i,j] = numer[i,j]/denom[i,j]
+    return W
+
+def ortho_FFDIAG(X, tau_len = 10):
+    R_tau = ortho_generate_covariance_matrices(X,tau_len)
+    N = len(R_tau[0])
+    K = len(R_tau.keys())
+    W = np.zeros((N,N))
+    #V = np.zeros((N,N))
+    V = np.eye(N)
+    C = R_tau
+    niter = 0
+    theta = 0.9
+    eps = 1.0
+    while eps>1.0e-10 and niter<100:
+        niter+=1
+        Vn1 = V
+        #V = np.dot((np.eye(N) + W), V)
+        for k in xrange(0,K):
+            C[k] = np.dot(np.dot((np.eye(N) + W),C[k]),(np.eye(N) + W).T)
+        W = ortho_generate_update_term(C)
+        if np.linalg.norm(W) > theta:
+            W = (W*theta)/np.linalg.norm(W)
+        # update V
+        V = np.dot(expm(W),V)
+        #print W
+        #print np.dot((np.eye(N) + W),V)
+        delta = 0
+        #print V
+        #print Vn1
+        for i in xrange(0,N):
+            for j in xrange(0,N):
+                if i == j:
+                    pass
+                else:
+                    delta += (V[i][j]-Vn1[i][j])**2
+        eps = (delta/(N*(N-1)))
+        #print eps
+    #print niter
+    #print V
+    ut = np.dot(V,X)
+    return np.linalg.inv(V),V, ut
