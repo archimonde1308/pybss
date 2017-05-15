@@ -1,75 +1,18 @@
-
 # coding: utf-8
 
-# In[1]:
-
 import numpy as np
-from aautil import sources as ss
+import pickle,munkres
+
+
 from aautil import gram_schmidt as gs
+
 from statsmodels.tsa.stattools import acf
 import matplotlib.pyplot as plt
 import munkres
-import cPickle
-import pyica.fastica as ica
 
+from . import sources as ss
 
-# In[2]:
-
-def ma_signal(nSources = 1,nSamples = 1000,p = [0.7],mu = 0.0):
-
-    """generates a moving average model given the mean, lag parameters and number of sample points
-       t(output, 1-D array) : array of time points
-       X(output, 1-D array) : array of sample points
-       nSources(integer, optional) : number of source signals; default is 1
-       nSamples(integer, optional) : number of sample points; default is 1000
-       p(1-D array, optional) : set of lag parameters; default is [0.7]
-       mu(float, optional) : mean value of the sample distribution; default is 0.0
-    """
-
-    wt = ss.unitsources(nSources = (0,0,nSources), nSamples = nSamples)
-    X = np.zeros(wt.shape)
-    t = np.zeros((1,len(wt[0,:])))
-
-    for i in xrange(0,nSamples):
-        c = np.zeros((nSources,1))
-        for j in xrange(0,len(p)):
-            if i-j <1:
-                pass
-            else:
-                c[:,0] = c[:,0] + p[j]*wt[:,i-j-1]
-        X[:,i] = mu + wt[:,i] + c[:,0]
-        t[0,i] = 1.0*i/nSamples
-
-    return t,X
-
-
-# In[3]:
-
-def ar_signal(nSources =1,nSamples = 1000,p = [0.7],mu = 0.0):
-
-    """generates an autoregressive model given the mean, lag parameters and number of sample points
-       t(output, 1-D array) : array of time points
-       X(output, 1-D array) : array of sample points
-       N(integer, optional) : number of sample points; default is 1000
-       p(1-D array, optional) : set of lag parameters; default is [0.7]
-       mu(float, optional) : mean value of the sample distribution; default is 0.0
-    """
-
-    wt = ss.unitsources(nSources = (0,0,nSources), nSamples = nSamples)
-    X = np.zeros(wt.shape)
-    t = np.zeros((1,len(wt[0,:])))
-
-    for i in xrange(0,nSamples):
-        c = np.zeros((nSources,1))
-        for j in xrange(0,len(p)):
-            if i-j <1:
-                pass
-            else:
-                c[:,0] = c[:,0] + p[j]*X[:,i-j-1]
-        X[:,i] = mu + wt[:,i] + c[:,0]
-        t[0,i] = 1.0*i/nSamples
-
-    return t,X
+#import pyica.fastica as ica
 
 
 # In[4]:
