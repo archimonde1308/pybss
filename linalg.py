@@ -36,7 +36,6 @@ def whitening_matrix(X,n):
 
     INPUT:
     ------
-
     X : array, required
         N x t data matrix
 
@@ -51,7 +50,7 @@ def whitening_matrix(X,n):
     Kd : array
         Dewhitening matrix; will be size X.shape[0] x n
 
-    Usage : Kw,Kd = whiteningmatrix(X,n)
+    Usage : Kw,Kd = whitening_matrix(X,n)
     '''
     if(n > X.shape[0]):
         n = X.shape[0]
@@ -69,13 +68,13 @@ def lagged_covariance(X, max_lag):
     X : array, required
         N x t data matrix
 
-    tau_list : array of integers, required
-        list of lags
+    max_lag : integer, required
+        covariance matrices will be computed for lags 0,1,...,max_lag
 
     OUTPUT:
     ------
     R_tau : dictionary, keyed on the lag, with values equal to the lagged
-        covariance of X with te lagged version of itself.
+        covariance of X with the lagged version of itself.
     '''
     R_tau = {}
     R0 = dot(X,X.T)
