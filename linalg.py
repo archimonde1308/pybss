@@ -80,8 +80,6 @@ def lagged_covariance(X, max_lag):
     R_tau = {}
     R0 = dot(X,X.T)
     R_tau[0] = R0
-    # not used ??? u,s,v = svd(R0, full_matrices = False)
-    # not used ??? kw,kd = whiteningmatrix(R0, len(X[:,0]))
     t = len(X[0,:])
     for tau in range(1,max_lag):
         for i in range(tau,t):
