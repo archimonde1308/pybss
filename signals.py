@@ -102,12 +102,13 @@ def audiobooks(dim = 3,n_samples = 1000):
         +Flatland
         +Huckleberry Finn
         +Moby Dick
+        +History of the Peloponnesian War
     Each signal is chosen randomly from one of these audiobooks (with replacement),
     and each block begins at a random starting location within that audiobook.
     Each signal is standardized.
     '''
     S = zeros((dim,n_samples))
-    books = ('AliceInWonderland','ConfessionsOfAugustine','Flatland','HuckFinn','MobyDick')
+    books = ('AliceInWonderland','ConfessionsOfAugustine','Flatland','HuckFinn','MobyDick','PeloponnesianWar')
     for i in range(dim):
         audio_file = 'data/'+choice(books)+'.pydb'
         audio_data = pickle.load(open(audio_file,'rb'))
