@@ -89,7 +89,7 @@ def amuse(X, tau = 1):
 
 def sobi(X, max_lag = 15):
     '''
-    Blind source separation using SOBI (second-order blind independence)
+    Blind source separation using SOBI (second-order blind identification)
     algorithm.
 
     INPUT:
@@ -206,3 +206,18 @@ def ortho_ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
 
     ut = dot(V,X)
     return inv(V),V, ut
+
+
+def fobi(X):
+    '''
+    Blind source separation via the FOBI (fourth order blind identification)
+    algorithm.
+    '''
+    R_x = np.dot(X,X.T)
+    C = np.linalg.cholesky(R_x)
+    Y = np.dot(np.linalg.inv(C),X)
+    R_y = (np.linalg.norm(Y)**2)*(np.dot(Y,Y.T))
+    u,s,Y_i = np.linalg.svd(R_y)
+    alpha = np.dot(Y_i,Y)   #messages (extracted sources)
+    X_i = np.dot(C,Y_i)     #signatures (mixing matrix)
+    return alpha,X_i
