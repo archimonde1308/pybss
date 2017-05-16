@@ -1,4 +1,4 @@
-from numpy import dot,diag,eye,zeros
+from numpy import dot,diag,eye,zeros,cov,newaxis
 from numpy.linalg import svd
 
 def gs_proj(u, v):
@@ -57,7 +57,7 @@ def whitening_matrix(X,n):
     U,D,Vt = svd(dot(X,X.T)/X.shape[1],full_matrices=False)
     return dot(diag(1.0/sqrt(D[0:n])),U[:,0:n].T),dot(U[:,0:n],diag(sqrt(D[0:n])))
 
-
+# NEED TO CENTER MATRICES FIRST
 def lagged_covariance(X, max_lag):
     '''
     Generates a dictionary of lagged covariance matrices of matrix X, for
@@ -84,8 +84,12 @@ def lagged_covariance(X, max_lag):
         for i in range(tau,t):
             X_t = X[:,0:t-tau]
             X_ttau = X[:,tau:t]
-            Rt = dot(X_t,X_ttau.T)
-            R_tau[tau] = Rt/(t - tau)
+            # center the lag matrices
+            X_t = X_t - X_t.mean(axis=1)[:,newaxis]
+            X_ttau = X_ttau - X_ttau.mean(axis=1)[:,newaxis]
+            # replace with np.cov(X_t,X_ttau)[0:dim,dim::]
+            #Rt = dot(X_t,X_ttau.T)
+            R_tau[tau] = cov(X_t,X_ttau)[0:dim,dim::]
     return R_tau
 
 
