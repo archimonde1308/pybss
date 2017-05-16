@@ -1,5 +1,5 @@
 from numpy import dot,diag,eye,zeros
-from numpy.linalg import svd,pinv,multi_dot,norm,inv
+from numpy.linalg import svd,pinv,multi_dot,norm,inv,cholesky
 from scipy.linalg import expm
 
 import linalg
@@ -213,11 +213,11 @@ def fobi(X):
     Blind source separation via the FOBI (fourth order blind identification)
     algorithm.
     '''
-    R_x = np.dot(X,X.T)
-    C = np.linalg.cholesky(R_x)
-    Y = np.dot(np.linalg.inv(C),X)
-    R_y = (np.linalg.norm(Y)**2)*(np.dot(Y,Y.T))
-    u,s,Y_i = np.linalg.svd(R_y)
-    alpha = np.dot(Y_i,Y)   #messages (extracted sources)
-    X_i = np.dot(C,Y_i)     #signatures (mixing matrix)
+    R_x = linalg.lagged_covariance(X,0)
+    C = cholesky(R_x)
+    Y = dot(inv(C),X)
+    R_y = (norm(Y)**2)*(dot(Y,Y.T))
+    u,s,Y_i = svd(R_y)
+    alpha = dot(Y_i,Y)   #messages (extracted sources)
+    X_i = dot(C,Y_i)     #signatures (mixing matrix)
     return alpha,X_i
