@@ -85,7 +85,7 @@ def lagged_covariance(X, max_lag):
             X_t = X[:,0:t-tau]
             X_ttau = X[:,tau:t]
             Rt = dot(X_t,X_ttau.T)
-            R_tau[tau] = Rt
+            R_tau[tau] = Rt/(t - tau)
     return R_tau
 
 

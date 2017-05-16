@@ -77,14 +77,8 @@ def amuse(X, tau = 1):
 
     Ry = linalg.lagged_covariance(Y,0)
     Ry = Ry[0]
-    ''' DEPRECATED
-    # calculate lagged covariance
-    for i in xrange(tau,t):
-        Y_t = Y[:,0:t-tau]
-        Y_ttau = Y[:,tau:t]
-    Ry = dot(Y_t,Y_ttau.T)
-    '''
-    uy,sy,vy = svd((Ry + Ry.T)/2, full_matrices= False)
+
+    uy,sy,vy = svd((Ry + Ry.T)/2, full_matrices=False)
 
     S = dot(vy.T,Y)
     A = dot(dot(uy, diag(psi)), vy)
