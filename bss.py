@@ -216,8 +216,12 @@ def fobi(X):
     R_x = linalg.lagged_covariance(X,0)
     C = cholesky(R_x)
     Y = dot(inv(C),X)
+
     R_y = (norm(Y)**2)*(dot(Y,Y.T))
     u,s,Y_i = svd(R_y)
-    alpha = dot(Y_i,Y)   #messages (extracted sources)
-    X_i = dot(C,Y_i)     #signatures (mixing matrix)
-    return alpha,X_i
+
+    alpha = dot(Y_i,Y)   # messages (extracted sources)
+    X_i = dot(C,Y_i)     # signatures (mixing matrix)
+    W_i = pinv(X_i)      # unmixing matrix
+    # return things in A,W,S order to conform to other bss methods
+    return X_i,W_i,alpha
