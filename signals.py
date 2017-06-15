@@ -10,7 +10,7 @@ def fetch_resource(rname):
     Wraps the pkg_resources fetch of the data file.  rname should just be
     the name of the data file, with no extension.
     '''
-    return pkg_resources.resource_filename(__name__,'datea/'+rname+'.pydb')
+    return pkg_resources.resource_filename(__name__,'data/'+rname+'.pydb')
 
 
 def moving_average(dim = 1,n_samples = 1000,p = [0.7],mu = 0.0):
