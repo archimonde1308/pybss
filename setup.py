@@ -3,9 +3,9 @@
 from distutils.core import setup,Command
 
 setup(name='pybss',
-      version='0.0.0',
+      version='0.0.1',
       description='Python package for blind source separation',
-      author='Kevin Brown',
+      author='Kevin Brown and Ameya Akkalkotkar',
       author_email='kevin.s.brown@uconn.edu',
       url='https://thelahunginjeet@bitbucket.org/Archimonde/pybss.git',
       packages=['pybss'],

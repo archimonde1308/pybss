@@ -1,8 +1,17 @@
 from numpy import zeros
 from numpy.random import choice,randint
-import pickle
+import pickle,pkg_resources
 
 import sources
+
+
+def fetch_resource(rname):
+    '''
+    Wraps the pkg_resources fetch of the data file.  rname should just be
+    the name of the data file, with no extension.
+    '''
+    return pkg_resources.resource_filename(__name__,'datea/'+rname+'.pydb')
+
 
 def moving_average(dim = 1,n_samples = 1000,p = [0.7],mu = 0.0):
     '''
@@ -110,8 +119,8 @@ def audiobooks(dim = 3,n_samples = 1000):
     S = zeros((dim,n_samples))
     books = ('AliceInWonderland','ConfessionsOfAugustine','Flatland','HuckFinn','MobyDick','PeloponnesianWar')
     for i in range(dim):
-        audio_file = 'data/'+choice(books)+'.pydb'
-        audio_data = pickle.load(open(audio_file,'rb'))
+        audio_file = choice(books)
+        audio_data = pickle.load(open(fetch_resource(audio_file),'rb'))
         # generate a random integer between 0 and len(data) - n_samples
         start_loc = randint(0,len(audio_data)-n_samples)
         S[i,:] = audio_data[start_loc:start_loc + n_samples]
