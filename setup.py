@@ -3,14 +3,14 @@
 from distutils.core import setup,Command
 
 setup(name='pybss',
-      version='0.0.2',
+      version='0.0.3',
       description='Python package for blind source separation',
       author='Kevin Brown and Ameya Akkalkotkar',
       author_email='kevin.s.brown@uconn.edu',
       url='https://thelahunginjeet@bitbucket.org/Archimonde/pybss.git',
       packages=['pybss'],
       package_dir={'pybss': ''},
-      package_data={'pycar' : ['data/*.pydb']},
+      package_data={'pybss' : ['data/*.pydb']},
       install_requires = ['munkres'],
       license='BSD-3',
       classifiers = [
