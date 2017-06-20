@@ -180,8 +180,8 @@ def ortho_ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
     R_tau = linalg.lagged_covariance(X,max_lag)
     dim = len(R_tau[0]) # formerly N
     n_lags = len(R_tau.keys()) # formerly K
-    W = zeros((N,N))
-    V = eye(N)
+    W = zeros((dim,dim))
+    V = eye(dim)
     C = R_tau
     n_iter = 0
     theta = 0.9
