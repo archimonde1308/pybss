@@ -29,8 +29,8 @@ def ffdiag_update(R_tau,ortho):
                 if i != j:
                     W[i][j] = (z[i,j]*y[j,i]-z[i,i]*y[i,j])/(z[j,j]*z[i,i]-z[i,j]*z[i,j])
     else:
-        num = zeros(dim,dim)
-        den = zeros(dim,dim)
+        num = zeros((dim,dim))
+        den = zeros((dim,dim))
         for i in range(0,dim):
             for j in range(0,dim):
                 for tau in range(0,n_lags):
