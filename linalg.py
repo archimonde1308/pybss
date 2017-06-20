@@ -82,7 +82,7 @@ def lagged_covariance(X, max_lag):
     R_tau[0] = R0
     t = len(X[0,:])
     dim = X.shape[0]
-    for tau in range(1,max_lag):
+    for tau in range(1,max_lag+1):
         for i in range(tau,t):
             X_t = X[:,0:t-tau]
             X_ttau = X[:,tau:t]
