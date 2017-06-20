@@ -41,6 +41,6 @@ def Q(s_true,s_est):
     for pair in row_pairs:
         perm_indices[pair[0]] = pair[1]
     # now compute Q using the permutation indices
-    Q = 1.0 - diag(C[:,perm_indices]).sum()/n
+    Q = 1.0 - abs(diag(C[:,perm_indices])).sum()/n
     # this gives the Q factor
     return Q,perm_indices
