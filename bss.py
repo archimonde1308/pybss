@@ -75,7 +75,7 @@ def amuse(X, tau = 1):
     Y = dot(C,X)
     t = X.shape[1]
 
-    Ry = linalg.lagged_covariance(Y,0)
+    Ry = linalg.lagged_covariance(Y,tau)[tau]
     Ry = Ry[0]
 
     uy,sy,vy = svd((Ry + Ry.T)/2, full_matrices=False)
