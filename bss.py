@@ -101,7 +101,7 @@ def sobi(X, max_lag = 15):
         maximum lag (in samples) for covariance matrix calculation
     '''
     Kw,Kd = linalg.whitening_matrix(X, len(X[:,0]))
-    Z = dot(kw,X)
+    Z = dot(Kw,X)
     R_tau = linalg.lagged_covariance(Z,max_lag)
     D = linalg.joint_diagonalizer(R_tau)
     S  = dot(D.T,Z)
