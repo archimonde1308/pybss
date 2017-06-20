@@ -3,7 +3,7 @@
 from distutils.core import setup,Command
 
 setup(name='pybss',
-      version='0.0.6',
+      version='0.0.7',
       description='Python package for blind source separation',
       author='Kevin Brown and Ameya Akkalkotkar',
       author_email='kevin.s.brown@uconn.edu',

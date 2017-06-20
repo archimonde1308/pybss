@@ -144,7 +144,7 @@ def ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
         Vn1 = V
         V = dot((eye(dim) + W), V)
         for tau in range(0,n_lags):
-            C[tau] = multi_dot([eye(dim) + W,C[tau],(eye[dim]+W).T])
+            C[tau] = multi_dot([eye(dim) + W,C[tau],(eye(dim)+W).T])
         W = ffdiag_update(C,False)
         W = W*theta/norm(W)
         delta = 0
@@ -191,7 +191,7 @@ def ortho_ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
         n_iter += 1
         Vn1 = V
         for tau in xrange(0,n_lags):
-            C[tau] = multi_dot([eye(dim) + W,C[tau],(eye[dim]+W).T])
+            C[tau] = multi_dot([eye(dim) + W,C[tau],(eye(dim)+W).T])
         W = ffdiag_update(C,True)
         if norm(W) > theta:
             W = (W*theta)/norm(W)
