@@ -32,12 +32,14 @@ def ffdiag_update(R_tau,ortho):
         num = zeros((dim,dim))
         den = zeros((dim,dim))
         for i in range(0,dim):
-            for j in range(0,dim):
+            for j in range(i+1,dim):
                 for tau in range(0,n_lags):
                     num[i,j] +=  Ek[tau][i,j]*(Dk[tau][i,i] - Dk[tau][j,j])
                     den[i,j] += (Dk[tau][i,i]-Dk[tau][j,j])**2
                 if i != j:
                     W[i,j] = num[i,j]/den[i,j]
+                    # W must be skew-symmetric (W = -W^T)
+                    W[j,i] = -W[i,j]
     return W
 
 
