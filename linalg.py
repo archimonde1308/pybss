@@ -1,4 +1,4 @@
-from numpy import dot,diag,eye,zeros,cov,newaxis,sqrt
+from numpy import dot,diag,eye,zeros,cov,newaxis,sqrt,copy
 from numpy.linalg import svd
 
 def gs_proj(u, v):
@@ -6,8 +6,8 @@ def gs_proj(u, v):
     Projection for Gram-Schimdt orthogonalization. Assumes that
     input vector U has nonzero norm; dot(u,u) cannot be zero.
     '''
-    assert np.dot(u,u) > 0
-    return u * np.dot(v,u) / np.dot(u,u)
+    assert dot(u,u) > 0
+    return u * dot(v,u) / dot(u,u)
 
 
 def gram_schmidt(V):
@@ -16,7 +16,7 @@ def gram_schmidt(V):
     Returns an orthogonalized copy of V.
     '''
     V = 1.0 * V
-    U = np.copy(V)
+    U = copy(V)
     for i in xrange(1, V.shape[1]):
         for j in xrange(i):
             U[:,i] -= gs_proj(U[:,j], V[:,i])
