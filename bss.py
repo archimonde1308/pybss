@@ -2,6 +2,9 @@ from numpy import dot,diag,eye,zeros
 from numpy.linalg import svd,pinv,multi_dot,norm,inv,cholesky
 from scipy.linalg import expm
 
+# remove later
+import numpy as np
+
 import linalg
 
 
@@ -19,15 +22,18 @@ def ffdiag_update(R_tau,ortho):
         Ek[tau] = R_tau[tau] - Dk[tau]
     W = zeros((dim,dim))
     if ortho is False:
+        z = zeros(W.shape)
+        y = zeros(W.shape)
         for i in range(0,dim):
             for j in range(0,dim):
-                z = zeros(W.shape)
-                y = zeros(W.shape)
                 for tau in range(0,n_lags):
-                    z[i,j] += Dk[tau][i,j]
+                    z[i,j] += Dk[tau][i,i]*Dk[tau][j,j]
                     y[i,j] += Dk[tau][j,j]*Ek[tau][i,j]
-                if i != j:
-                    W[i][j] = (z[i,j]*y[j,i]-z[i,i]*y[i,j])/(z[j,j]*z[i,i]-z[i,j]*z[i,j])
+        # compute W
+        for i in range(0,dim):
+            for j in range(i+1,dim):
+                W[i][j] = (z[i,j]*y[j,i]-z[i,i]*y[i,j])/(z[j,j]*z[i,i]-z[i,j]*z[i,j])
+                W[j][i] = (z[i,j]*y[i,j]-z[j,j]*y[j,i])/(z[j,j]*z[i,i]-z[i,j]*z[i,j])
     else:
         num = zeros((dim,dim))
         den = zeros((dim,dim))
@@ -111,7 +117,7 @@ def sobi(X, max_lag = 15):
     return A,W,S
 
 
-def ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
+def ffdiag(X, max_lag = 10, eps = 1.0e-10, max_iter = 100):
     '''
     Blind source separation using FFDIAG.  This version does not require that
     the estimated mixing matrix be orthogonal.
@@ -131,32 +137,41 @@ def ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
         maximum number of iterations/updates
     '''
     R_tau = linalg.lagged_covariance(X,max_lag)
-    dim = len(R_tau[0]) # formerly N
-    n_lags = len(R_tau.keys()) # formerly K
+    dim = len(R_tau[0])
+    n_lags = len(R_tau.keys())
     W = zeros((dim,dim))
-    V = zeros((dim,dim))
+    V = eye(dim)
     C = R_tau
-    n_iter = 0
+    niter = 0
     theta = 0.9
     iter_eps = 1.0
 
-    while iter_eps > eps or n_iter < max_iter:
-        n_iter += 1
+    while iter_eps > eps and niter < max_iter:
+        niter += 1
         Vn1 = V
-        V = dot((eye(dim) + W), V)
-        for tau in range(0,n_lags):
+
+        for tau in xrange(0,n_lags):
             C[tau] = multi_dot([eye(dim) + W,C[tau],(eye(dim)+W).T])
+
+        # update term
         W = ffdiag_update(C,False)
-        W = W*theta/norm(W)
+        if norm(W) > theta:
+            W = (W*theta)/norm(W)
+
+        # update V
+        V = dot(eye(dim) + W,V)
+
         delta = 0
         for i in xrange(0,dim):
             for j in xrange(0,dim):
-                if i != j:
+                if i == j:
+                    pass
+                else:
                     delta += (V[i][j]-Vn1[i][j])**2
-        eps = delta/(dim*(dim-1))
+        iter_eps = (delta/(dim*(dim-1)))
 
     ut = dot(V,X)
-    return C,V,ut
+    return inv(V),V, ut
 
 
 def ortho_ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):

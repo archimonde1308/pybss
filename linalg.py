@@ -58,7 +58,7 @@ def whitening_matrix(X,n):
     return dot(diag(1.0/sqrt(D[0:n])),U[:,0:n].T),dot(U[:,0:n],diag(sqrt(D[0:n])))
 
 
-# NEED TO CENTER MATRICES FIRST
+# switch back to proper cov matrix def. once I've fixed ffdiag
 def lagged_covariance(X, max_lag):
     '''
     Generates a dictionary of lagged covariance matrices of matrix X, for
@@ -78,20 +78,21 @@ def lagged_covariance(X, max_lag):
         covariance of X with the lagged version of itself.
     '''
     R_tau = {}
-    R0 = dot(X,X.T)
-    R_tau[0] = R0
-    t = len(X[0,:])
+    t = X.shape[1]
     dim = X.shape[0]
+    #R_tau[0] = cov(X,X)[0:dim,dim::]
+    R_tau[0] = dot(X,X.T)
     for tau in range(1,max_lag+1):
         for i in range(tau,t):
             X_t = X[:,0:t-tau]
             X_ttau = X[:,tau:t]
             # center the lag matrices
-            X_t = X_t - X_t.mean(axis=1)[:,newaxis]
-            X_ttau = X_ttau - X_ttau.mean(axis=1)[:,newaxis]
+            #X_t = X_t - X_t.mean(axis=1)[:,newaxis]
+            #X_ttau = X_ttau - X_ttau.mean(axis=1)[:,newaxis]
             # replace with np.cov(X_t,X_ttau)[0:dim,dim::]
-            #Rt = dot(X_t,X_ttau.T)
-            R_tau[tau] = cov(X_t,X_ttau)[0:dim,dim::]
+            Rt = dot(X_t,X_ttau.T)
+            #R_tau[tau] = cov(X_t,X_ttau)[0:dim,dim::]
+            R_tau[tau] = Rt
     return R_tau
 
 
