@@ -1,6 +1,16 @@
 from numpy import dot,diag,eye,zeros,cov,newaxis,sqrt,copy
 from numpy.linalg import svd
 
+
+def row_center(X):
+    """
+    Removes the mean of each row of matrix X, returning those means and the
+    centered matrix.
+    """
+    rowmeans = X.mean(axis=-1)
+    return rowmeans, X - rowmeans[:, newaxis]
+
+
 def gs_proj(u, v):
     '''
     Projection for Gram-Schimdt orthogonalization. Assumes that
