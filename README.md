@@ -21,8 +21,10 @@ A pure python package for Blind Source Separation, currently including the follo
 Currently, only fixed-point FastICA is supported.  See the documentation in the modules for detailed usage and function arguments.  
 As an example, if you've installed the package and want to use FastICA to extract n <= N sources from a data matrix X of size N x T, you can do:
 
->>import pybss.fastica as ica
->>A,W,S = ica.fastica(X,n)
+```python
+import pybss.fastica as ica
+A,W,S = ica.fastica(X,n)
+```
 
 All source code is made available under the BSD-3 license (see LICENSE).  We are indebted to the FastICA code written by Pierre Lafaye de Micheaux,
 Stefan van der Walt, and Gael Varoquaux. (Their original code had a "do whatever you want with this" license).  We suggest you use this FastICA code
