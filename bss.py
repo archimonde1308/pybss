@@ -5,7 +5,7 @@ from scipy.linalg import expm
 # remove later
 import numpy as np
 
-import linalg
+from . import linalg
 
 
 def ffdiag_update(R_tau,ortho):
@@ -150,7 +150,7 @@ def ffdiag(X, max_lag = 10, eps = 1.0e-10, max_iter = 100):
         niter += 1
         Vn1 = V
 
-        for tau in xrange(0,n_lags):
+        for tau in range(0,n_lags):
             C[tau] = multi_dot([eye(dim) + W,C[tau],(eye(dim)+W).T])
 
         # update term
@@ -162,8 +162,8 @@ def ffdiag(X, max_lag = 10, eps = 1.0e-10, max_iter = 100):
         V = dot(eye(dim) + W,V)
 
         delta = 0
-        for i in xrange(0,dim):
-            for j in xrange(0,dim):
+        for i in range(0,dim):
+            for j in range(0,dim):
                 if i == j:
                     pass
                 else:
@@ -206,7 +206,7 @@ def ortho_ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
     while iter_eps > eps and n_iter < max_iter:
         n_iter += 1
         Vn1 = V
-        for tau in xrange(0,n_lags):
+        for tau in range(0,n_lags):
             C[tau] = multi_dot([eye(dim) + W,C[tau],(eye(dim)+W).T])
         W = ffdiag_update(C,True)
         if norm(W) > theta:
@@ -214,8 +214,8 @@ def ortho_ffdiag(X, max_lag = 10, eps = 1.0e-08, max_iter = 100):
         # update V
         V = dot(expm(W),V)
         delta = 0
-        for i in xrange(0,dim):
-            for j in xrange(0,dim):
+        for i in range(0,dim):
+            for j in range(0,dim):
                 if i != j:
                     delta += (V[i][j]-Vn1[i][j])**2
         eps = (delta/(dim*(dim-1)))
@@ -230,7 +230,7 @@ def fobi(X):
     algorithm.
     '''
     R_x = linalg.lagged_covariance(X,0)
-    C = cholesky(R_x)
+    C = cholesky(R_x[0])
     Y = dot(inv(C),X)
 
     R_y = (norm(Y)**2)*(dot(Y,Y.T))
