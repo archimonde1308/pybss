@@ -8,10 +8,14 @@ A pure python package for Blind Source Separation, currently including the follo
 
 +FastICA (parallel extraction and deflation, "A Fast Fixed-Point Algorithm for Independent Component Analysis",
   A. Hyvarinen and E. Oja, Neural Comput. 9(7) 1997)
+
 +AMUSE ("AMUSE: A New Blind Identification Algorithm", L. Tong, V.C. Soon, Y.F. Huang, and R. Liu.
+
 +SOBI ("A Blind Source Separation Technique Using Second-Order Statistics", A. Belouchrani, IEEE Trans. Sig. Proc., 45 (2) 1997)
+
 +FFDIAG (orthogonal and unrestricted, "A Fast Algorithm for Joint Diagonalization with Non-orthogonal Transformations and its Application to
   Blind Source Separation", A. Ziehe, P. Laskov, G. Nolte, and K.-R. Mueller, JMLR 5 2004)
+
 +FOBI ("Source Separation Using Higher Order Moments", J.-F. Cardoso)
 
 Currently, only fixed-point FastICA is supported.  See the documentation in the modules for detailed usage and function arguments.  
