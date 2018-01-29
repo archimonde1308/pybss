@@ -104,21 +104,21 @@ def decorrelation_mdum(W):
 
 
 """FastICA algorithms."""
-def ica_def(X, tolerance, g, gprime, orthog, alpha, maxIterations, Winit):
+def ica_def(X, tolerance, g, g_prime, orthog, alpha, max_iter, W_init):
     """Deflationary FastICA using Gram-Schmidt decorrelation at each step. This
     function is not meant to be directly called; it is wrapped by fastica()."""
     n,p = X.shape
-    W = Winit
+    W = W_init
     # j is the index of the extracted component
     for j in xrange(n):
-        w = Winit[j, :]
+        w = W_init[j, :]
         it = 1
         lim = tolerance + 1
-        while ((lim > tolerance) & (it < maxIterations)):
+        while ((lim > tolerance) & (it < max_iter)):
             wtx = dot(w, X)
             gwtx = g(wtx, alpha)
-            g_wtx = gprime(wtx, alpha)
-            w1 = (X * gwtx).mean(axis=1) - g_wtx.mean() * w
+            gpwtx = g_prime(wtx, alpha)
+            w1 = (X * gwtx).mean(axis=1) - gpwtx.mean() * w
             w1 = decorrelation_gs(w1, W, j)
             lim = npabs(npabs((w1 * w).sum()) - 1.0)
             w = w1
@@ -126,18 +126,18 @@ def ica_def(X, tolerance, g, gprime, orthog, alpha, maxIterations, Winit):
         W[j, :] = w
     return W
 
-def ica_par_fp(X, tolerance, g, gprime, orthog, alpha, maxIterations, Winit):
+def ica_par_fp(X, tolerance, g, g_prime, orthog, alpha, max_iter, W_init):
     """Parallel FastICA; orthog sets the method of unmixing vector decorrelation. This
     fucntion is not meant to be directly called; it is wrapped by fastica()."""
     n,p = X.shape
-    W = orthog(Winit)
+    W = orthog(W_init)
     lim = tolerance + 1
     it = 1
-    while ((lim > tolerance) and (it < maxIterations)):
+    while ((lim > tolerance) and (it < max_iter)):
         wtx = dot(W,X)
         gwtx = g(wtx,alpha)
-        g_wtx = gprime(wtx,alpha)
-        W1 = dot(gwtx,X.T)/p - dot(diag(g_wtx.mean(axis=1)),W)
+        gpwtx = g_prime(wtx,alpha)
+        W1 = dot(gwtx,X.T)/p - dot(diag(gpwtx.mean(axis=1)),W)
         W1 = orthog(W1)
         lim = npmax(npabs(npabs(diag(dot(W1,W.T))) - 1.0))
         W = W1
@@ -146,7 +146,7 @@ def ica_par_fp(X, tolerance, g, gprime, orthog, alpha, maxIterations, Winit):
 
 
 
-def fastica(X, nSources=None, algorithm="parallel fp", decorrelation="mdum", nonlinearity="logcosh", alpha=1.0, maxIterations=500, tolerance=1e-05, Winit=None, scaled=True):
+def fastica(X, n_sources=None, algorithm="parallel fp", decorrelation="mdum", nonlinearity="logcosh", alpha=1.0, max_iter=500, tolerance=1e-05, W_init=None, scaled=True):
     """Perform FastICA on data matrix X.  All algorithms currently implemented are fixed point iteration
     (as opposed to gradient descent) methods.  For default usage (good for many applications), simply call:
 
@@ -157,7 +157,7 @@ def fastica(X, nSources=None, algorithm="parallel fp", decorrelation="mdum", non
     X: numpy array, size n x p
        array of data to unmix - n variables, p observations
 
-    nSources: int, optional
+    n_sources: int, optional
         number of sources to estimate.  if nSources < n, dimensionality reduction (via pca)
         is performed.  If nSources = None, full-rank (nSources = n) decomposition is performed.
 
@@ -180,13 +180,13 @@ def fastica(X, nSources=None, algorithm="parallel fp", decorrelation="mdum", non
     alpha : float,optional
         parameter for 'logcosh' and 'exp' nonlinearities.  Should be in [1,2]
 
-    maxIterations: int, optional
+    max_iter: int, optional
         maximum number of iterations
 
     tolerance: float, optional
         tolerance at which the unmixing matrix is considered to have converged
 
-    Winit: numpy array, size nSources x n
+    W_init: numpy array, size nSources x n
         initial guess for the unmixing matrix
 
     scaled : bool, optional
@@ -213,33 +213,33 @@ def fastica(X, nSources=None, algorithm="parallel fp", decorrelation="mdum", non
 
     if nonlinearity == 'logcosh':
         g = lc
-        gprime = lcp
+        g_prime = lcp
     elif nonlinearity == 'exp':
         g = gauss
-        gprime = gaussp
+        g_prime = gaussp
     elif nonlinearity == 'skew':
         g = skew
-        gprime = skewp
+        g_prime = skewp
     else:
         g = cube
-        gprime = cubep
+        g_prime = cubep
 
-    nmix,nsamp = X.shape
+    n_mix,n_samp = X.shape
 
     # default is to do full-rank decomposition
-    if nSources is None:
-        nSources = nmix
-    if Winit is None:
+    if n_sources is None:
+        n_sources = n_mix
+    if W_init is None:
         # start with a random orthogonal decomposition
-        Winit = randn(nSources,nSources)
+        W_init = randn(n_sources,n_sources)
 
     # preprocessing (centering/whitening/pca)
     rowmeansX,X = row_center(X)
-    Kw,Kd = whitening_matrix(X,nSources)
+    Kw,Kd = whitening_matrix(X,n_sources)
     X = dot(Kw,X)
 
     # pass through kwargs
-    kwargs = {'tolerance': tolerance,'g': g,'gprime': gprime,'orthog':orthog_funcs[decorrelation],'alpha': alpha,'maxIterations': maxIterations,'Winit': Winit}
+    kwargs = {'tolerance': tolerance,'g': g,'g_prime': g_prime,'orthog':orthog_funcs[decorrelation],'alpha': alpha,'max_iter': max_iter,'W_init': W_init}
     func = algorithm_funcs[algorithm]
 
     # run ICA
