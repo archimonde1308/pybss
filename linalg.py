@@ -27,8 +27,8 @@ def gram_schmidt(V):
     '''
     V = 1.0 * V
     U = copy(V)
-    for i in xrange(1, V.shape[1]):
-        for j in xrange(i):
+    for i in range(1, V.shape[1]):
+        for j in range(i):
             U[:,i] -= gs_proj(U[:,j], V[:,i])
     # normalize column
     den=(U**2).sum(axis=0) **0.5
@@ -112,7 +112,7 @@ def joint_diagonalizer(X_dict):
     for i in range(0,dim):
         G_ij = zeros((2,2))
         for j in range(i+1,dim):
-            for k in xrange(0,n_matrices):
+            for k in range(0,n_matrices):
                 h = zeros((1,2))
                 h[0,0] = X_dict[k][i,i]-X_dict[k][j,j]
                 h[0,1] = X_dict[k][i,j]+X_dict[k][j,i]
