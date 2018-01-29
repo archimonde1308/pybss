@@ -2,7 +2,7 @@ from numpy import zeros
 from numpy.random import choice,randint
 import pickle,pkg_resources
 
-import sources
+from . import sources
 
 
 def fetch_resource(rname):
@@ -44,9 +44,9 @@ def moving_average(dim = 1,n_samples = 1000,p = [0.7],mu = 0.0):
     X = zeros(wt.shape)
     t = zeros((1,len(wt[0,:])))
 
-    for i in xrange(0,n_samples):
+    for i in range(0,n_samples):
         c = zeros((dim,1))
-        for j in xrange(0,len(p)):
+        for j in range(0,len(p)):
             if i-j <1:
                 pass
             else:
@@ -89,9 +89,9 @@ def autoregressive(dim = 1,n_samples = 1000,p = [0.7],mu = 0.0):
     X = zeros(wt.shape)
     t = zeros((1,len(wt[0,:])))
 
-    for i in xrange(0,n_samples):
+    for i in range(0,n_samples):
         c = zeros((dim,1))
-        for j in xrange(0,len(p)):
+        for j in range(0,len(p)):
             if i-j <1:
                 pass
             else:

@@ -17,7 +17,7 @@ def randspin(size=None):
     Generates an array of shape size of random {-1,1} spin variables.
     '''
     return 2*randbit(size=size) - 1;
-    
+
 
 def unitsources(nSources=(1,1,1),nSamples=1024,subType='dblcosh',supType='invcosh'):
     '''
@@ -72,7 +72,7 @@ def unitsources(nSources=(1,1,1),nSamples=1024,subType='dblcosh',supType='invcos
     # gaussians
     sourceList.append(sgauss(nSources[2],nSamples))
 
-    return vstack(filter(lambda x : shape(x) > 0, sourceList))
+    return vstack(list(filter(lambda x : len(x) > 0, sourceList)))
 
 
 
